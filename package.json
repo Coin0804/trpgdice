@@ -21,7 +21,9 @@
   "keywords": [
     "chatbot",
     "koishi",
-    "plugin"
+    "plugin",
+    "dice",
+    "trpg"
   ],
   "peerDependencies": {
     "koishi": "^4.12.0"
