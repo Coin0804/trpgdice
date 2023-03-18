@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-trpgdice",
   "description": "a trpg dice demo",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "contributors": [
     "Coin<coin0804@outlook.com>"
   ],
@@ -27,5 +27,11 @@
   ],
   "peerDependencies": {
     "koishi": "^4.12.0"
+  },
+  "koishi":{
+    "description": {                    
+      "zh": "trpg骰子核心功能。"
+    },
+    "locales":["zh"]
   }
 }

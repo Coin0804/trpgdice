@@ -1,6 +1,3 @@
-
-
-
 export class Dice implements RollAble{
     faces: number
     times: number
