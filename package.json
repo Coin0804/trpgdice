@@ -1,14 +1,14 @@
 {
   "name": "koishi-plugin-trpgdice",
   "description": "a trpg dice demo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "contributors": [
     "Coin<coin0804@outlook.com>"
   ],
-  "homepage": "https://github.com/coin0804/koishi-plugin-trpgdice.git",
+  "homepage": "https://github.com/coin0804/trpgdice",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/coin0804/koishi-plugin-trpgdice.git"
+    "url": "git+https://github.com/coin0804/trpgdice.git"
   },
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",

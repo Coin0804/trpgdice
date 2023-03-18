@@ -103,7 +103,8 @@ export class RollTool{
         // 逐步处理
         tail = "投掷了"+exp.split(".")[1]+"="
         if(round>1){// 多轮掷骰按轮出结果
-            const rollresult = new Array(round).map(()=>this.rollAllParts(parts).sum).sort((a,b)=>b-a)
+            const t = this
+            const rollresult = new Array(round).fill(1).map(()=>t.rollAllParts(parts).sum).sort((a,b)=>b-a)
             // 排序之后大的在前，直接用大括号框起
             tail += "[{"+rollresult[0]+"},"
             for (let i=1;i<round-1; i++) {
