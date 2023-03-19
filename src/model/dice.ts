@@ -3,7 +3,7 @@ export class Dice implements RollAble{
     times: number
     result: number[] = []
     sum:number
-    constructor(faces:number,times:number){
+    constructor(times:number,faces:number){
         this.faces = faces
         this.times = times
         this.roll()

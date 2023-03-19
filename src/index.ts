@@ -21,8 +21,8 @@ let rollTool: RollTool;
 
 export function apply(ctx: Context, config: Config) {
 	rollTool = new RollTool(config);
-
-	ctx.command("r <times:posint> <faces:posint> [reason:text]")
+	
+	ctx.command("r <times:posint> <faces:posint> [reason:string] 简单投掷")
 		.shortcut(/^.r(([0-9]{1,3})?d([0-9]{1,4})?)?( (.+))?$/, { args: ['$2', '$3', '$5'] })
 		.usage(
 			"尽管可以通过命令本身进行掷骰，也可以使用传统trpg骰子方式掷骰。"
@@ -35,9 +35,9 @@ export function apply(ctx: Context, config: Config) {
 		.example(".rd6 投1次6面骰")
 		.example(".r8d6 投8次6面骰")
 		.example(".r8d6 火球术伤害 带理由")
-		.action((_,arg1,arg2,arg3)=>{return rollTool.sampleRoll(_,arg1,arg2,arg3)})
+		.action((_,arg1,arg2,arg3)=>rollTool.sampleRoll(_,arg1,arg2,arg3))
 
-	ctx.command("ComplexRoll") // 故意写的复杂写，不打算匹配到这个
+	ctx.command("ComplexRoll 复杂投掷") // 故意写的复杂写，不打算匹配到这个
 		.shortcut(complexRollRegExp)
 		.usage("复杂的掷骰仅仅通过正则传参无法处理，需要一个命令单独处理。"
 			+ "所谓复杂掷骰就是包括加值（减值），分段，和多轮的掷骰。"
@@ -51,5 +51,12 @@ export function apply(ctx: Context, config: Config) {
 		.example(".r3R3d6 投掷3轮，每轮3次6面骰")
 		.example(".r3R2d6+6 投掷2轮，每轮进行：骰2次6面骰并将结果加6")
 		.example(".r2R3d6+1d8-1d6+12-4 劣势射击带buff 超级大杂烩，加值，减值，分段，多轮，理由全带")
-		.action((_)=>{return rollTool.complexRoll(_)})
+		.action((_)=>rollTool.complexRoll(_))
+
+	ctx.command("rc <attribute:posint> [reason:string] coc检定")
+		.shortcut(/^.rc( ([1-9][0-9]?))( (.+))?$/,{args:["$2","$4"]})
+		.usage("参数中应该输入一个1-99的整数。")
+		.example(".rc 60 力量")
+		.action((_,attribute,reason)=>rollTool.rollCheck(_,attribute,reason))
+
 }
