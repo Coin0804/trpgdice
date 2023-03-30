@@ -1,4 +1,4 @@
-export class Dice implements RollAble{
+export class Dice{
     faces: number
     times: number
     result: number[] = []

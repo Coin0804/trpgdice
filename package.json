@@ -28,6 +28,9 @@
   "peerDependencies": {
     "koishi": "^4.12.0"
   },
+  "optionalDependencies": {
+    "@koishijs/plugin-help": "^2.2.2"
+  },
   "koishi": {
     "description": {
       "zh": "trpg骰子核心功能。"

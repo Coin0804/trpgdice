@@ -1,0 +1,57 @@
+commands:
+  # 简单投掷
+  roll:
+    description: 简单投掷
+    usage: |
+      尽管可以通过命令本身进行掷骰，也可以使用传统trpg骰子方式掷骰。
+      单枚骰子最大次数为：{timesMax} 最大面数为：{facesMax} 
+      当然也可以空一格带理由，见示例。
+    examples: |
+      .r 投1次默认值
+      .rd 投1次默认值
+      .r8d 投8次默认值
+      .rd6 投1次6面骰
+      .r8d6 投8次6面骰
+      .r8d6 火球术伤害 带理由
+    messages: 
+      overflow: 输入数值超出边间，最大面数：{facesMax}最多次数：{timesMax}次数和面数都不能为0。
+      single: "{player}由于{reason}投掷了{source}={sum}"
+      multi: "{player}由于{reason}投掷了{source}={result}={sum}"
+      singleNR: "{player}投掷了{source}={sum}"
+      multiNR: "{player}投掷了{source}={result}={sum}"
+  # 复杂投掷
+  complexroll: 
+    description: 复杂投掷
+    usage: |
+      复杂的掷骰仅仅通过正则传参无法处理，需要一个命令单独处理。
+      所谓复杂掷骰就是包括加值（减值），分段，和多轮的掷骰。
+      这些内容可以结合起来使用，都可以有或没有，一个或多个，但加值和分段的总和不能超过{partsMax}段。
+      多轮掷骰的结果会从高到低排列，被大括号框起的为最大值，小括号则为最小值。
+      当然也可以空一格带理由，具体使用方法见示例。
+      （命令中解释过的语法被省略了，见help r）
+    examples: |
+      .r8d6-8 投8次6面骰，最后得到的结果-8
+      .r8d6+3d8 分别投掷8次6面骰和3次8面骰，结果相加
+      .r3R3d6 投掷3轮，每轮3次6面骰
+      .r3R2d6+6 投掷2轮，每轮进行：骰2次6面骰并将结果加6
+      .r2R3d6+1d8-1d6+12-4 劣势射击带buff 超级大杂烩，加值，减值，分段，多轮，理由全带
+    messages: 
+      overflow: 输入数值超出边间，最大面数：{facesMax}最多次数：{timesMax}最大部件数：{partsMax}次数和面数都不能为0。
+      single: "{player}由于{reason}投掷了{source}={result}={sum}"
+      multi: "{player}由于{reason}投掷了{source}={result}"
+      singleNR: "{player}投掷了{source}={result}={sum}"
+      multiNR: "{player}投掷了{source}={result}"
+      notExp: 无效表达式，可以使用命令help complexroll了解详细使用方法。
+  # coc检定
+  rcheck: 
+    description: coc检定
+    usage: 参数中应该输入一个1-99的整数。
+    examples: .rc 60 力量
+    messages:
+      overflow: "输入不规范，详见help rc"
+      greatSuccess: "{player}进行了{reason}检定1d100={result} 大成功！"
+      exDifficultSuccess: "{player}进行了{reason}检定1d100={result} 极难成功！"
+      difficultSuccess: "{player}进行了{reason}检定1d100={result} 困难成功！"
+      success: "{player}进行了{reason}检定1d100={result} 成功。"
+      fail: "{player}进行了{reason}检定1d100={result} 失败。"
+      greatFail: "{player}进行了{reason}检定1d100={result} 大失败！"
