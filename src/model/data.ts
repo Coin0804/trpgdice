@@ -3,7 +3,6 @@
  */
 
 import {Session} from "koishi";
-import {Config} from "..";
 
 let defaultConfig:Config
 
@@ -16,7 +15,10 @@ export function getConfig(session?:Session):Config{
 }
 
 export function getNickname(session:Session){
-    // TODO: 
+    // 这里应该写泛型的，可是我不会写啊！
+    if((session.user as any).name){
+        return (session.user as any).name
+    }
     return session.username
 }
 
