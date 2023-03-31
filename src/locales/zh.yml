@@ -55,3 +55,19 @@ commands:
       success: "{player}进行了{reason}检定1d100={result} 成功。"
       fail: "{player}进行了{reason}检定1d100={result} 失败。"
       greatFail: "{player}进行了{reason}检定1d100={result} 大失败！"
+  # 暗骰
+  rhide:
+    description: 暗骰
+    usage: |
+     用法与简单掷骰相同，详见help roll
+     由于风控原因，实际上不进行暗骰
+     供dm装腔作势用
+     真要暗骰请将骰子加为好友几天后再私聊
+     不然很容易风控
+    examples: |
+     .rh
+     .rhd20
+     .rh1d100
+    messages:
+      action: "{dm}进行了一次暗骰。"
+      noaction: "当前环境无法暗骰"

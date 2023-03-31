@@ -1,15 +1,22 @@
-interface ComplexRollPart{
+declare interface Config {
+	defaultDiceFices: number,
+	facesMax: number,
+	timesMax: number,
+	partsMax: number,
+}
+
+declare interface ComplexRollPart{
     flag:-1|1,
     type:"roll"|"bouns",
     toRoll?:{times:number,faces:number},
     toAdd?:number
 }
-interface Part2Analyze{
+declare interface Part2Analyze{
     flag:-1|1
     text:string
 }
 
-interface RollAnswer{
+declare interface RollAnswer{
     player:string,
     source:string,
     reason?:string,
@@ -17,7 +24,7 @@ interface RollAnswer{
     sum?:number
 }
 
-interface RollCheckAnswer{
+declare interface RollCheckAnswer{
     player:string,
     reason?:string,
     result:number
