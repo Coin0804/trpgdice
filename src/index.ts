@@ -1,5 +1,5 @@
 import {Context,Schema} from 'koishi'
-import {complexRoll,complexRollRegExp,rollCheck,sampleRoll} from './model/roll'
+import {roll,SanpshotRollRegExp,rollCheck} from './model/roll'
 import {} from '@koishijs/plugin-help' // 仅引入类型，实际上并未形成依赖
 import {getNickname,setDefaultConfig} from './model/data'
 
@@ -19,25 +19,19 @@ export function apply(ctx: Context,config: Config) {
 	setDefaultConfig(config)
 	const zh = require("./locales/zh")
 	ctx.i18n.define("zh",zh)
-	// 简单投掷，单字母的指令和其他r开头的指令冲突，故复杂化
-	ctx.command("roll <times:posint> <faces:posint> [reason:string]",{params: config})
+	ctx.command("roll <exp:string> [reason:string]",{params: config})
 		.userFields(['name'])
-		.shortcut(/^.r(([0-9]{1,3})?d([0-9]{1,4})?)?( (.+))?$/,{args: ['$2','$3','$5']})
-		.action(({session},time,face,reason) => sampleRoll(session,time,face,reason))
-	// 复杂投掷，故意写的复杂写，不打算匹配到这个
-	ctx.command("complexroll",{params: config})
-		.userFields(['name'])
-		.shortcut(complexRollRegExp)
-		.action(({session}) => complexRoll(session))
+		.shortcut(SanpshotRollRegExp)
+		.action(({session},exp,reason) => roll(session,exp,reason))
 	// coc检定，同理复杂化
 	ctx.command("rcheck <attribute:posint> [reason:string]")
 		.userFields(['name'])
 		.shortcut(/^.rc( ([1-9][0-9]?))( (.+))?$/,{args: ["$2","$4"]})
 		.action(({session},attribute,reason) => rollCheck(session,attribute,reason))
 	// 暗骰，由于平台风控原因，实际上不执行
-	ctx.command("rhide <times:posint> <faces:posint>")
+	ctx.command("rhide <exp:string>")
 		.userFields(['name'])
-		.shortcut(/^.rh(([0-9]{1,3})?d([0-9]{1,4})?)?$/,{args: ['$2','$3']})
+		.shortcut(/^.rh(([0-9]{1,3})?d([0-9]{1,4})?)?$/,{args: ['$1']})
 		.action(({session}) => {
 			if(session.guild) return session.text(".action",{dm: getNickname(session)})
 			return session.text(".noaction")

@@ -14,10 +14,9 @@ export function getConfig(session?:Session):Config{
     return defaultConfig
 }
 
-export function getNickname(session:Session){
-    // 这里应该写泛型的，可是我不会写啊！
-    if((session.user as any).name){
-        return (session.user as any).name
+export function getNickname(session:Session<'name'>){
+    if(session.user.name){
+        return session.user.name
     }
     return session.username
 }

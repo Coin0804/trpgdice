@@ -2,37 +2,20 @@ import {Session} from "koishi";
 import {getConfig, getGreatSuccessNum, getNickname} from "./data";
 import {Dice} from "./dice";
 
-export const complexRollRegExp = /^.r([0-9]{1,3}R)?([0-9]{1,3})?d([0-9]{1,4})?([\+-]([0-9]{1,3}d[0-9]{1,4}|[0-9]{1,3}))*( (.+))?$/
+export const RollRegExp = /^([0-9]{1,3}R)?([0-9]{1,3})?d([0-9]{1,4})?([\+-]([0-9]{1,3}d[0-9]{1,4}|[0-9]{1,3}))*$/
+export const SanpshotRollRegExp = /^.r([0-9]{1,3}R)?([0-9]{1,3})?d([0-9]{1,4})?([\+-]([0-9]{1,3}d[0-9]{1,4}|[0-9]{1,3}))*( (.+))?$/
 
-// 简单掷骰
-export function sampleRoll(session:Session,times: number = 1,faces: number = getConfig().defaultDiceFices,reason: string){
-    if(times > getConfig(session).timesMax || faces > getConfig(session).facesMax || times * faces == 0) {
-        return session.text(".overflow",getConfig(session))
-    }
-    const dice = new Dice(times,faces);
-    let result = dice.result[0]+""
-    for(let i = 1;i < times;i++) {
-        result += "+" + dice.result[i]
-    }
-    const answer:RollAnswer = {
-        player:getNickname(session),
-        source:times+"d"+faces,
-        reason:reason,
-        result:result,
-        sum:dice.sum
-    }
-    switch(times){
-        case 1: return session.text(answer.reason?".single":".singleNR",answer)
-        default:return session.text(answer.reason?".multi":".multiNR",answer)
-    }
-}
 // 复杂掷骰
-export function complexRoll(session:Session) {
-    if(!session.content.match(complexRollRegExp)) { 
-        // 说明不是通过表达式匹配到的，那就是通过这个原名或者定义的别名，这两种情况都是用不了的
-        return session.text(".notExp")
+export function roll(session:Session<'name'>,inputexp:string,inputreason:string) {
+    let exp = inputexp
+    let reason = inputreason
+    if(!session.content.match(SanpshotRollRegExp)) { 
+        if(!inputexp.match(RollRegExp)){
+            return session.text(".notexp")
+        }
+    }else{
+        [exp,reason] = session.content.split(" ")
     }
-    const [exp,reason] = session.content.split(" ")
     // 初始化部件数组
     const parts: ComplexRollPart[] = []
     const parts2Analyze: Part2Analyze[] = [] 
@@ -92,9 +75,9 @@ export function complexRoll(session:Session) {
         }
     }
     let answer:RollAnswer = {
-        player:getNickname(session),
-        source:exp,
-        reason:reason
+        player: getNickname(session),
+        source: inputexp || exp,
+        reason: inputreason || reason
     }
     // 部件解析完毕，开始投掷
     if(round > 1) {
@@ -112,13 +95,15 @@ export function complexRoll(session:Session) {
         let rollresult = rollAllParts(parts)
         answer.result=rollresult.str
         answer.sum=rollresult.sum
-    }    
-    switch(isMultiRound){
-        case true: return session.text(answer.reason?".multi":".multiNR",answer)
+    }
+    switch(true){
+        case isMultiRound: return session.text(answer.reason?".multi":".multiNR",answer)
+        case parts.length ==1 : return session.text(answer.reason?".sample_single":".sample_singleNR",answer)
         default:return session.text(answer.reason?".single":".singleNR",answer)
     }
 }
-// 复杂掷骰 子方法
+
+// 掷骰 子方法
 function rollAllParts(parts: ComplexRollPart[]) {
     let result: number[] = [];
     let str = ""
@@ -149,7 +134,7 @@ function rollAllParts(parts: ComplexRollPart[]) {
     return {result: result,str: str,sum: sum}
 }
 // coc检定
-export function rollCheck(session:Session,attribute: number,reason: string) {
+export function rollCheck(session:Session<'name'>,attribute: number,reason: string) {
     if(attribute < 1 || attribute > 99) return session.text(".overflow")
     const dice = new Dice(1,100)
     const answer:RollCheckAnswer = {
