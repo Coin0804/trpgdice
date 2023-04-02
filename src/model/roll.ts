@@ -10,7 +10,7 @@ export function roll(session:Session<'name'>,inputexp:string,inputreason:string)
     let exp = inputexp
     let reason = inputreason
     if(!session.content.match(SanpshotRollRegExp)) { 
-        if(!inputexp.match(RollRegExp)){
+        if(!inputexp?.match(RollRegExp)){
             return session.text(".notexp")
         }
     }else{
