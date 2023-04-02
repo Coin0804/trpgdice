@@ -3,7 +3,7 @@ import {getConfig, getGreatSuccessNum, getNickname} from "./data";
 import {Dice} from "./dice";
 
 export const RollRegExp = /^([0-9]{1,3}R)?([0-9]{1,3})?d([0-9]{1,4})?([\+-]([0-9]{1,3}d[0-9]{1,4}|[0-9]{1,3}))*$/
-export const SanpshotRollRegExp = /^.r([0-9]{1,3}R)?([0-9]{1,3})?d([0-9]{1,4})?([\+-]([0-9]{1,3}d[0-9]{1,4}|[0-9]{1,3}))*( (.+))?$/
+export const SanpshotRollRegExp = /^.r(([0-9]{1,3}R)?([0-9]{1,3})?d([0-9]{1,4})?)?([\+-]([0-9]{1,3}d[0-9]{1,4}|[0-9]{1,3}))*( (.+))?$/
 
 // 复杂掷骰
 export function roll(session:Session<'name'>,inputexp:string,inputreason:string) {
@@ -11,7 +11,7 @@ export function roll(session:Session<'name'>,inputexp:string,inputreason:string)
     let reason = inputreason
     if(!session.content.match(SanpshotRollRegExp)) { 
         if(!inputexp?.match(RollRegExp)){
-            return session.text(".notexp")
+            return session.text(".notExp")
         }
     }else{
         [exp,reason] = session.content.split(" ")
@@ -40,11 +40,11 @@ export function roll(session:Session<'name'>,inputexp:string,inputreason:string)
         }
     }
     // 从正则解析第一个部件
-    let firstPartArgs = parts2Analyze[0].text.match(/.r(([0-9]{1,3})R)?([0-9]{1,3})?d([0-9]{1,3})?/)
-    const isMultiRound = !!firstPartArgs[1]
-    const round = isMultiRound ? Number(firstPartArgs[2]) : 1
-    let times = Number(firstPartArgs[3])||1
-    let faces = Number(firstPartArgs[4])||getConfig(session).defaultDiceFices
+    let firstPartArgs = parts2Analyze[0].text.match(/^(.r)?((([0-9]{1,3})R)?([0-9]{1,3})?d([0-9]{1,3})?)?/)
+    const isMultiRound = !!firstPartArgs[3]
+    const round = isMultiRound ? Number(firstPartArgs[4]) : 1
+    let times = Number(firstPartArgs[5])||1
+    let faces = Number(firstPartArgs[6])||getConfig(session).defaultDiceFices
     parts[0] = {
         flag: 1,
         type: "roll",
@@ -76,7 +76,7 @@ export function roll(session:Session<'name'>,inputexp:string,inputreason:string)
     }
     let answer:RollAnswer = {
         player: getNickname(session),
-        source: inputexp || exp,
+        source: (isMultiRound||parts.length!=1)?exp:`${times}d${faces}`,
         reason: inputreason || reason
     }
     // 部件解析完毕，开始投掷
@@ -98,7 +98,7 @@ export function roll(session:Session<'name'>,inputexp:string,inputreason:string)
     }
     switch(true){
         case isMultiRound: return session.text(answer.reason?".multi":".multiNR",answer)
-        case parts.length ==1 : return session.text(answer.reason?".sample_single":".sample_singleNR",answer)
+        case (parts.length==1&&times==1): return session.text(answer.reason?".sample_single":".sample_singleNR",answer)
         default:return session.text(answer.reason?".single":".singleNR",answer)
     }
 }
