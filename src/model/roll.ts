@@ -45,6 +45,9 @@ export function roll(session:Session<'name'>,inputexp:string,inputreason:string)
     const round = isMultiRound ? Number(firstPartArgs[4]) : 1
     let times = Number(firstPartArgs[5])||1
     let faces = Number(firstPartArgs[6])||getConfig(session).defaultDiceFices
+    if(times > getConfig(session).timesMax || faces > getConfig(session).facesMax) {
+        return session.text(".overflow",getConfig(session))
+    }
     parts[0] = {
         flag: 1,
         type: "roll",
